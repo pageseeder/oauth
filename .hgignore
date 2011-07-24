@@ -1,0 +1,7 @@
+
+syntax: regexp
+^ivy\.properties$
+syntax: regexp
+^doc$
+syntax: regexp
+^release$
