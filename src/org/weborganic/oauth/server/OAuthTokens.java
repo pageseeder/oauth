@@ -209,7 +209,7 @@ public class OAuthTokens {
     Iterator<Entry<String, OAuthTemporaryToken>> j = TEMPORARY.entrySet().iterator();
     while (j.hasNext()) {
       OAuthTemporaryToken token = j.next().getValue();
-      if (token.hasExpired()) {
+      if (token.hasExpired() || token.isUsed()) {
         j.remove();
         count++;
       }
