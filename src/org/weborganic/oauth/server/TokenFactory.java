@@ -5,6 +5,9 @@ import java.util.Collection;
 /**
  * Classes implementing this interface should be able to create and manage tokens.
  * 
+ * <p>Applications using this API should provide their own implementation of a <code>TokenFactory</code>
+ * as the default token factory mostly useful for testing purposes but will not scale.
+ * 
  * @author Christophe Lauret
  * @version 27 July 2011
  */

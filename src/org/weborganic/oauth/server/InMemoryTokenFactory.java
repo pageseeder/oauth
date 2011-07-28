@@ -18,7 +18,7 @@ import org.weborganic.oauth.util.Strings;
  * @author Christophe Lauret
  * @version 27 July 2011
  */
-public class InMemoryTokenFactory implements TokenFactory {
+public final class InMemoryTokenFactory implements TokenFactory {
 
   /**
    * The defaut maximum age for an OAuth token.
