@@ -16,14 +16,9 @@ import org.weborganic.oauth.util.Strings;
  * A utility class to manage OAuth tokens. 
  * 
  * @author Christophe Lauret
- * @version 20 July 2011
+ * @version 27 July 2011
  */
 public class OAuthTokens {
-
-  /**
-   * The defaut maximum age for an OAuth token.
-   */
-  private final static long DEFAULT_TOKEN_MAX_AGE = 24 * 3600 * 1000L;
 
   /**
    * The defaut maximum age for a temporary OAuth token.
@@ -38,7 +33,7 @@ public class OAuthTokens {
   /**
    * To look up OAuth tokens by name.
    */
-  private final static Map<String, OAuthAccessToken> TOKENS = new HashMap<String, OAuthAccessToken>();
+  private final static TokenFactory FACTORY = new InMemoryTokenFactory();
 
   /**
    * To look up OAuth tokens by name.
@@ -52,8 +47,7 @@ public class OAuthTokens {
    * @return the corresponding OAuth token or <code>null</code>.
    */
   public static OAuthAccessToken get(String token) {
-    if (token == null) return null;
-    return TOKENS.get(token);
+    return FACTORY.get(token);
   }
 
   /**
@@ -63,15 +57,7 @@ public class OAuthTokens {
    * @return the access tokens.
    */
   public static Collection<OAuthAccessToken> listTokens(int upTo) {
-    if (upTo < 0) return listTokens();
-    List<OAuthAccessToken> tokens = new ArrayList<OAuthAccessToken>(upTo);
-    synchronized (TOKENS) {
-      int count = 0;
-      for (Iterator<OAuthAccessToken> i = TOKENS.values().iterator(); count < upTo && i.hasNext(); count++) {
-        tokens.add(i.next());
-      }
-    }
-    return tokens;
+    return FACTORY.listTokens(upTo);
   }
 
   /**
@@ -80,11 +66,17 @@ public class OAuthTokens {
    * @return the access tokens.
    */
   public static Collection<OAuthAccessToken> listTokens() {
-    List<OAuthAccessToken> tokens = new ArrayList<OAuthAccessToken>(TOKENS.size());
-    synchronized (TOKENS) {
-      tokens.addAll(new ArrayList<OAuthAccessToken>(TOKENS.values()));
-    }
-    return tokens;
+    return FACTORY.listTokens();
+  }
+
+  /**
+   * Creates new token credentials for the specified client.
+   * 
+   * @param client The OAuth client for which this token is issued.
+   * @return A new OAuth token.
+   */
+  public synchronized static OAuthAccessToken newToken(OAuthClientImpl client) {
+    return FACTORY.newToken(client);
   }
 
   /**
@@ -116,26 +108,6 @@ public class OAuthTokens {
       tokens.addAll(new ArrayList<OAuthTemporaryToken>(TEMPORARY.values()));
     }
     return tokens;
-  }
-
-  /**
-   * Creates new token credentials for the specified client.
-   * 
-   * @param client The OAuth client for which this token is issued.
-   * @return A new OAuth token.
-   */
-  public synchronized static OAuthAccessToken newToken(OAuthClientImpl client) {
-    // Generate the token string and ensure it is unique
-    String identifier = Strings.random(client.id(), 37);
-    while (TOKENS.containsKey(identifier)) {
-      identifier = Strings.random(client.id(), 21);
-    }
-    String secret = Strings.random(client.id(), 23);
-    OAuthCredentials credentials = new OAuthCredentials(identifier, secret);
-    long expires = System.currentTimeMillis() + DEFAULT_TOKEN_MAX_AGE;
-    OAuthAccessToken token = new OAuthAccessToken(credentials, expires, client);
-    TOKENS.put(identifier, token);
-    return token;
   }
 
   /**
@@ -176,8 +148,8 @@ public class OAuthTokens {
    * 
    * @return The token that was removed.
    */
-  public static synchronized OAuthAccessToken revoke(String token) {
-    return TOKENS.remove(token);
+  public static OAuthAccessToken revoke(String token) {
+    return FACTORY.revoke(token);
   }
 
   /**
@@ -195,16 +167,7 @@ public class OAuthTokens {
    * @return the number of tokens which were removed.
    */
   public static synchronized int clearStale() {
-    int count = 0;
-    // Remove Access tokens which have expired
-    Iterator<Entry<String, OAuthAccessToken>> i = TOKENS.entrySet().iterator();
-    while (i.hasNext()) {
-      OAuthAccessToken token = i.next().getValue();
-      if (token.hasExpired()) {
-        i.remove();
-        count++;
-      }
-    }
+    int count = FACTORY.clearStale();
     // Remove Temporary tokens which have expired or been used
     Iterator<Entry<String, OAuthTemporaryToken>> j = TEMPORARY.entrySet().iterator();
     while (j.hasNext()) {
