@@ -12,6 +12,9 @@ import org.weborganic.oauth.OAuthCredentials;
  */
 public final class OAuthTemporaryToken implements OAuthToken {
 
+  /**
+   * Associated credentials.
+   */
   private final OAuthCredentials _credentials;
 
   /**
@@ -22,7 +25,7 @@ public final class OAuthTemporaryToken implements OAuthToken {
   /**
    * The client for which this token was granted.
    */
-  private final OAuthClientImpl _client;
+  private final OAuthClient _client;
 
   /**
    * The verifier string.
@@ -48,7 +51,7 @@ public final class OAuthTemporaryToken implements OAuthToken {
    * @param expires     When this token expires.
    * @param callback    The callback URL for verification.
    */
-  public OAuthTemporaryToken(OAuthCredentials credentials, OAuthClientImpl client, String verifier, long expires, String callback) {
+  public OAuthTemporaryToken(OAuthCredentials credentials, OAuthClient client, String verifier, long expires, String callback) {
     this._credentials = credentials;
     this._expires = expires;
     this._client = client;
@@ -61,7 +64,7 @@ public final class OAuthTemporaryToken implements OAuthToken {
    * {@inheritDoc}
    */
   @Override
-  public OAuthClientImpl client() {
+  public OAuthClient client() {
     return this._client;
   }
 

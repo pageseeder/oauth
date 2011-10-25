@@ -35,4 +35,15 @@ public interface OAuthClient {
    */
   String getCallbackURL();
 
+  /**
+   * Indicates whether access is implicitly granted to the client or not.
+   * 
+   * <p>A <i>privileged</i> client does not require authorization from the resource owner. The
+   * presence of the resource owner is sufficient.
+   * 
+   * @return <code>true</code> if the client requires user authorization;
+   *         <code>false</code> otherwise.
+   */
+  boolean isPrivileged();
+
 }

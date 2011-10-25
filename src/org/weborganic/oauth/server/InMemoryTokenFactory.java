@@ -39,7 +39,7 @@ public final class InMemoryTokenFactory implements TokenFactory {
    * Creates a new token factory setting the maximum age to 24 hours.
    */
   public InMemoryTokenFactory() {
-    _maxAge = DEFAULT_TOKEN_MAX_AGE;
+    this._maxAge = DEFAULT_TOKEN_MAX_AGE;
   }
 
   /**
@@ -99,7 +99,7 @@ public final class InMemoryTokenFactory implements TokenFactory {
    * @param client The OAuth client for which this token is issued.
    * @return A new OAuth token.
    */
-  public synchronized OAuthAccessToken newToken(OAuthClientImpl client) {
+  public synchronized OAuthAccessToken newToken(OAuthClient client) {
     // Generate the token string and ensure it is unique
     String identifier = Strings.random(client.id(), 37);
     while (this._tokens.containsKey(identifier)) {

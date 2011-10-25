@@ -15,15 +15,17 @@ public interface OAuthToken {
   /**
    * @return the OAuth client associated with the token
    */
-  public abstract OAuthClientImpl client();
+  public abstract OAuthClient client();
 
   /**
-   * @return the token
+   * @return the token credentials.
    */
   public abstract OAuthCredentials credentials();
 
   /**
-   * @return the expires
+   * Returns the date the OAuth token expires.
+   * 
+   * @return the date the token expires.
    */
   public abstract long expires();
 
