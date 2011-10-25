@@ -33,7 +33,7 @@ public class OAuthTokens {
   /**
    * To look up OAuth tokens by name.
    */
-  private final static TokenFactory FACTORY = new InMemoryTokenFactory();
+  private static TokenFactory factory = new InMemoryTokenFactory();
 
   /**
    * To look up OAuth tokens by name.
@@ -47,7 +47,7 @@ public class OAuthTokens {
    * @return the corresponding OAuth token or <code>null</code>.
    */
   public static OAuthAccessToken get(String token) {
-    return FACTORY.get(token);
+    return factory.get(token);
   }
 
   /**
@@ -57,7 +57,7 @@ public class OAuthTokens {
    * @return the access tokens.
    */
   public static Collection<OAuthAccessToken> listTokens(int upTo) {
-    return FACTORY.listTokens(upTo);
+    return factory.listTokens(upTo);
   }
 
   /**
@@ -66,7 +66,7 @@ public class OAuthTokens {
    * @return the access tokens.
    */
   public static Collection<OAuthAccessToken> listTokens() {
-    return FACTORY.listTokens();
+    return factory.listTokens();
   }
 
   /**
@@ -75,8 +75,8 @@ public class OAuthTokens {
    * @param client The OAuth client for which this token is issued.
    * @return A new OAuth token.
    */
-  public synchronized static OAuthAccessToken newToken(OAuthClientImpl client) {
-    return FACTORY.newToken(client);
+  public synchronized static OAuthAccessToken newToken(OAuthClient client) {
+    return factory.newToken(client);
   }
 
   /**
@@ -128,7 +128,7 @@ public class OAuthTokens {
    * @param callback The URL to call back if the resource owner authorizes the client.
    * @return A new temporary token.
    */
-  public synchronized static OAuthTemporaryToken newTemporary(OAuthClientImpl client, String callback) {
+  public synchronized static OAuthTemporaryToken newTemporary(OAuthClient client, String callback) {
     // Generate the token string and ensure it is unique
     String identifier = Strings.random(client.id(), 37);
     while (TEMPORARY.containsKey(identifier)) {
@@ -149,7 +149,7 @@ public class OAuthTokens {
    * @return The token that was removed.
    */
   public static OAuthAccessToken revoke(String token) {
-    return FACTORY.revoke(token);
+    return factory.revoke(token);
   }
 
   /**
@@ -167,7 +167,7 @@ public class OAuthTokens {
    * @return the number of tokens which were removed.
    */
   public static synchronized int clearStale() {
-    int count = FACTORY.clearStale();
+    int count = factory.clearStale();
     // Remove Temporary tokens which have expired or been used
     Iterator<Entry<String, OAuthTemporaryToken>> j = TEMPORARY.entrySet().iterator();
     while (j.hasNext()) {
@@ -178,6 +178,24 @@ public class OAuthTokens {
       }
     }
     return count;
+  }
+
+  /**
+   * Sets the token factory to use.
+   *  
+   * @return the token factory to use.
+   */
+  public static void init(TokenFactory factory) {
+    OAuthTokens.factory = factory;
+  }
+
+  /**
+   * Returns the token factory currently in use.
+   *  
+   * @return the token factory currently in use.
+   */
+  public static TokenFactory getFactory() {
+    return OAuthTokens.factory;
   }
 
 }

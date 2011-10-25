@@ -42,7 +42,7 @@ public interface TokenFactory {
    * @param client The OAuth client for which this token is issued.
    * @return A new OAuth token.
    */
-  OAuthAccessToken newToken(OAuthClientImpl client);
+  OAuthAccessToken newToken(OAuthClient client);
 
   /**
    * Remove the specified token effectively revoking access for the client currently using the token.

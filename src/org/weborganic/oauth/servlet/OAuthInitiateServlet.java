@@ -12,7 +12,7 @@ import org.weborganic.oauth.OAuthException;
 import org.weborganic.oauth.OAuthParameter;
 import org.weborganic.oauth.OAuthProblem;
 import org.weborganic.oauth.OAuthRequest;
-import org.weborganic.oauth.server.OAuthClientImpl;
+import org.weborganic.oauth.server.OAuthClient;
 import org.weborganic.oauth.server.OAuthClients;
 import org.weborganic.oauth.server.OAuthToken;
 import org.weborganic.oauth.server.OAuthTokens;
@@ -104,7 +104,7 @@ public final class OAuthInitiateServlet extends HttpServlet {
 
     // Identify the client using the consumer Key
     String key = message.getOAuthParameter(OAuthParameter.oauth_consumer_key);
-    OAuthClientImpl client = OAuthClients.getByKey(key);
+    OAuthClient client = OAuthClients.getByKey(key);
     if (client == null) throw new OAuthException(OAuthProblem.consumer_key_unknown);
 
     // Get parameters

@@ -18,7 +18,7 @@ public final class OAuthAccessToken implements OAuthToken {
 
   private final long _expires;
 
-  private final OAuthClientImpl _client;
+  private final OAuthClient _client;
 
   /**
    * Creates a new OAuth token with the specified credentials.
@@ -27,7 +27,7 @@ public final class OAuthAccessToken implements OAuthToken {
    * @param expires     When this token expires.
    * @param client      The client for which this token is granted
    */
-  public OAuthAccessToken(OAuthCredentials credentials, long expires, OAuthClientImpl client) {
+  public OAuthAccessToken(OAuthCredentials credentials, long expires, OAuthClient client) {
     this._credentials = credentials;
     this._expires = expires;
     this._client = client;
@@ -37,7 +37,7 @@ public final class OAuthAccessToken implements OAuthToken {
    * {@inheritDoc}
    */
   @Override
-  public OAuthClientImpl client() {
+  public OAuthClient client() {
     return this._client;
   }
 
@@ -64,6 +64,5 @@ public final class OAuthAccessToken implements OAuthToken {
   public boolean hasExpired() {
     return System.currentTimeMillis() - this._expires > 0;
   }
-
 
 }
