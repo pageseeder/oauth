@@ -126,4 +126,11 @@ public final class OAuthTemporaryToken implements OAuthToken {
     return this._callback;
   }
 
+  /**
+   * @return Always <code>null</code>.
+   */
+  @Override
+  public String scope() {
+    return null;
+  }
 }

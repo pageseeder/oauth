@@ -33,7 +33,7 @@ public class OAuthTokens {
   /**
    * To look up OAuth tokens by name.
    */
-  private static TokenFactory factory = new InMemoryTokenFactory();
+  private static TokenFactory factory = null;
 
   /**
    * To look up OAuth tokens by name.
@@ -47,6 +47,7 @@ public class OAuthTokens {
    * @return the corresponding OAuth token or <code>null</code>.
    */
   public static OAuthAccessToken get(String token) {
+    if (factory == null) throw new IllegalStateException("Token Factory was not initialised.");
     return factory.get(token);
   }
 
@@ -57,6 +58,7 @@ public class OAuthTokens {
    * @return the access tokens.
    */
   public static Collection<OAuthAccessToken> listTokens(int upTo) {
+    if (factory == null) throw new IllegalStateException("Token Factory was not initialised.");
     return factory.listTokens(upTo);
   }
 
@@ -66,6 +68,7 @@ public class OAuthTokens {
    * @return the access tokens.
    */
   public static Collection<OAuthAccessToken> listTokens() {
+    if (factory == null) throw new IllegalStateException("Token Factory was not initialised.");
     return factory.listTokens();
   }
 
@@ -76,6 +79,7 @@ public class OAuthTokens {
    * @return A new OAuth token.
    */
   public synchronized static OAuthAccessToken newToken(OAuthClient client) {
+    if (factory == null) throw new IllegalStateException("Token Factory was not initialised.");
     return factory.newToken(client);
   }
 
@@ -149,6 +153,7 @@ public class OAuthTokens {
    * @return The token that was removed.
    */
   public static OAuthAccessToken revoke(String token) {
+    if (factory == null) throw new IllegalStateException("Token Factory was not initialised.");
     return factory.revoke(token);
   }
 
@@ -167,6 +172,7 @@ public class OAuthTokens {
    * @return the number of tokens which were removed.
    */
   public static synchronized int clearStale() {
+    if (factory == null) throw new IllegalStateException("Token Factory was not initialised.");
     int count = factory.clearStale();
     // Remove Temporary tokens which have expired or been used
     Iterator<Entry<String, OAuthTemporaryToken>> j = TEMPORARY.entrySet().iterator();
@@ -185,7 +191,7 @@ public class OAuthTokens {
    *  
    * @return the token factory to use.
    */
-  public static void init(TokenFactory factory) {
+  protected static void init(TokenFactory factory) {
     OAuthTokens.factory = factory;
   }
 

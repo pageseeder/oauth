@@ -19,9 +19,9 @@ import org.weborganic.oauth.OAuthException;
 import org.weborganic.oauth.OAuthParameter;
 import org.weborganic.oauth.OAuthProblem;
 import org.weborganic.oauth.OAuthRequest;
+import org.weborganic.oauth.server.OAuthAccessToken;
+import org.weborganic.oauth.server.OAuthConfig;
 import org.weborganic.oauth.server.OAuthClient;
-import org.weborganic.oauth.server.OAuthClients;
-import org.weborganic.oauth.server.OAuthToken;
 import org.weborganic.oauth.server.OAuthTokens;
 import org.weborganic.oauth.signature.OAuthSignatures;
 import org.weborganic.oauth.signature.OAuthSigner;
@@ -43,7 +43,7 @@ public final class OAuthServerFilter implements Filter {
    * <p>Use this when the client has already been authenticated by other means.
    */
   public static final String BYPASS_SESSION_ATTRIBUTE = "com.weborganic.oauth.servlet.bypass"; 
-  
+
   /**
    * Do nothing.
    * 
@@ -118,6 +118,9 @@ public final class OAuthServerFilter implements Filter {
    */
   private static final void checkOAuthRequest(HttpServletRequest req, HttpServletResponse res) throws OAuthException, IOException {
 
+    // Grab the OAuth configuration
+    OAuthConfig configuration = OAuthConfig.getInstance();
+
     // Grab the message
     OAuthRequest message = OAuthRequest.parse(req);
 
@@ -126,7 +129,7 @@ public final class OAuthServerFilter implements Filter {
 
     // Identify the client using the consumer Key
     String key = message.getOAuthParameter(OAuthParameter.oauth_consumer_key);
-    OAuthClient client = OAuthClients.getByKey(key);
+    OAuthClient client = configuration.manager().getByKey(key);
     if (client == null) throw new OAuthException(OAuthProblem.consumer_key_unknown);
 
     // Get parameters
@@ -135,7 +138,7 @@ public final class OAuthServerFilter implements Filter {
 
     // Check the token credentials
     String token = message.getOAuthParameter(OAuthParameter.oauth_token);
-    OAuthToken access = OAuthTokens.get(token);
+    OAuthAccessToken access = OAuthTokens.get(token);
     if (access == null)
       throw new OAuthException(OAuthProblem.token_rejected);
     if (access.hasExpired())
@@ -152,6 +155,9 @@ public final class OAuthServerFilter implements Filter {
     if (!Strings.equals(signature, signatureCheck)) {
       throw new OAuthException(OAuthProblem.signature_invalid);
     }
+
+    // Server Callback
+    configuration.callbacks().filter(access, req);
 
   }
 
