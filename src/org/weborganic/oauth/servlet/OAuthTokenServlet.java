@@ -134,7 +134,7 @@ public final class OAuthTokenServlet extends HttpServlet {
     OAuthAccessToken access = OAuthTokens.newToken(client);
 
     // Server Callback
-    configuration.callbacks().token(access, req);
+    configuration.callbacks().token(temporary, access, req);
 
     // Return the results to the client
     res.setContentType("application/x-www-form-urlencoded");

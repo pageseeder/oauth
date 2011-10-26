@@ -35,7 +35,7 @@ public final class NOPCallbacks implements Callbacks {
    * {@inheritDoc}
    */
   @Override
-  public void token(OAuthAccessToken token, HttpServletRequest req) {
+  public void token(OAuthTemporaryToken temporary, OAuthAccessToken token, HttpServletRequest req) {
   }
 
   /**
