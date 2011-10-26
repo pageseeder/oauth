@@ -1,4 +1,4 @@
-package org.weborganic.oauth.server;
+package org.weborganic.oauth.base;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.weborganic.oauth.OAuthCredentials;
+import org.weborganic.oauth.server.OAuthAccessToken;
+import org.weborganic.oauth.server.OAuthClient;
+import org.weborganic.oauth.server.TokenFactory;
 import org.weborganic.oauth.util.Strings;
 
 

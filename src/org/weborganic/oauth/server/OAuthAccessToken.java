@@ -9,7 +9,7 @@ import org.weborganic.oauth.OAuthCredentials;
  * <p>Tokens are immutable objects.
  * 
  * @author Christophe Lauret
- * @version 20 July 2011
+ * @version 25 October 2011
  */
 public final class OAuthAccessToken implements OAuthToken {
 
@@ -19,6 +19,8 @@ public final class OAuthAccessToken implements OAuthToken {
   private final long _expires;
 
   private final OAuthClient _client;
+
+  private final String _scope;
 
   /**
    * Creates a new OAuth token with the specified credentials.
@@ -31,6 +33,22 @@ public final class OAuthAccessToken implements OAuthToken {
     this._credentials = credentials;
     this._expires = expires;
     this._client = client;
+    this._scope = null;
+  }
+
+  /**
+   * Creates a new OAuth token with the specified credentials.
+   * 
+   * @param credentials The token credentials.
+   * @param expires     When this token expires.
+   * @param client      The client for which this token is granted
+   * @param scope       The scope of this token.
+   */
+  public OAuthAccessToken(OAuthCredentials credentials, long expires, OAuthClient client, String scope) {
+    this._credentials = credentials;
+    this._expires = expires;
+    this._client = client;
+    this._scope = scope;
   }
 
   /**
@@ -65,4 +83,11 @@ public final class OAuthAccessToken implements OAuthToken {
     return System.currentTimeMillis() - this._expires > 0;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String scope() {
+    return this._scope;
+  }
 }

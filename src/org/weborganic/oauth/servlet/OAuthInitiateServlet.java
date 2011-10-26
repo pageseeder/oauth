@@ -12,9 +12,9 @@ import org.weborganic.oauth.OAuthException;
 import org.weborganic.oauth.OAuthParameter;
 import org.weborganic.oauth.OAuthProblem;
 import org.weborganic.oauth.OAuthRequest;
+import org.weborganic.oauth.server.OAuthConfig;
 import org.weborganic.oauth.server.OAuthClient;
-import org.weborganic.oauth.server.OAuthClients;
-import org.weborganic.oauth.server.OAuthToken;
+import org.weborganic.oauth.server.OAuthTemporaryToken;
 import org.weborganic.oauth.server.OAuthTokens;
 import org.weborganic.oauth.signature.OAuthSignatures;
 import org.weborganic.oauth.signature.OAuthSigner;
@@ -96,6 +96,9 @@ public final class OAuthInitiateServlet extends HttpServlet {
   private static final void doProvideTemporaryCredentials(HttpServletRequest req, HttpServletResponse res)
       throws OAuthException, IOException {
 
+    // Grab the OAuth configuration
+    OAuthConfig configuration = OAuthConfig.getInstance();
+
     // Grab the message
     OAuthRequest message = OAuthRequest.parse(req);
 
@@ -104,7 +107,7 @@ public final class OAuthInitiateServlet extends HttpServlet {
 
     // Identify the client using the consumer Key
     String key = message.getOAuthParameter(OAuthParameter.oauth_consumer_key);
-    OAuthClient client = OAuthClients.getByKey(key);
+    OAuthClient client = configuration.manager().getByKey(key);
     if (client == null) throw new OAuthException(OAuthProblem.consumer_key_unknown);
 
     // Get parameters
@@ -128,7 +131,10 @@ public final class OAuthInitiateServlet extends HttpServlet {
     String callback = message.getOAuthParameter(OAuthParameter.oauth_callback);
     if (!URLs.isValidCallback(callback))
       throw new OAuthException(OAuthProblem.parameter_rejected);
-    OAuthToken token = OAuthTokens.newTemporary(client, callback);
+    OAuthTemporaryToken token = OAuthTokens.newTemporary(client, callback);
+
+    // Server Callback
+    configuration.callbacks().initiate(token, req);
 
     // Return the results to the client
     res.setContentType("application/x-www-form-urlencoded");

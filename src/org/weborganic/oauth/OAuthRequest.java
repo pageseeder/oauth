@@ -82,6 +82,7 @@ public class OAuthRequest {
     this.oauthParameters = oauthParameters;
   }
 
+  @Override
   public String toString() {
       return "OAuthMessage(" + method + ", " + baseURL + ", " + oauthParameters + ")";
   }

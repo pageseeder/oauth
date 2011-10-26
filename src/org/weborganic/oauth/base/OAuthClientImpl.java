@@ -1,7 +1,8 @@
-package org.weborganic.oauth.server;
+package org.weborganic.oauth.base;
 
 import org.weborganic.oauth.OAuthConstants;
 import org.weborganic.oauth.OAuthCredentials;
+import org.weborganic.oauth.server.OAuthClient;
 
 /**
  * Encapsulates information about an OAuth client.

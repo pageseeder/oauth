@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.weborganic.oauth.OAuthConstants;
 import org.weborganic.oauth.OAuthException;
 import org.weborganic.oauth.OAuthProblem;
+import org.weborganic.oauth.server.OAuthConfig;
 import org.weborganic.oauth.server.OAuthClient;
 import org.weborganic.oauth.server.OAuthTemporaryToken;
 import org.weborganic.oauth.server.OAuthTokens;
@@ -62,7 +63,7 @@ import org.weborganic.oauth.util.URLs;
  * }</pre>
  * 
  * @author Christophe Lauret
- * @version 21 July 2011
+ * @version 26 October 2011
  */
 public final class OAuthAuthorizeServlet extends HttpServlet {
 
@@ -72,20 +73,21 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
   private static final long serialVersionUID = 4249124644162116665L;
 
   /**
-   * The path to the Out-Of-Band page.
-   */
-  private String oob = null;
-
-  /**
-   * The path to the application authorization form.
+   * The path to the application authorization form where the user can authorize the application
+   * once he has authenticated.
    */
   private String form = null;
+
+  /**
+   * The path to the Out-Of-Band page where the user can see the verifier code can to use.
+   */
+  private String oob = null;
 
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    this.oob = config.getInitParameter("out-of-band-page");
     this.form = config.getInitParameter("authorize-form-page");
+    this.oob = config.getInitParameter("out-of-band-page");
   }
 
   @Override
@@ -97,45 +99,27 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-    if (this.form != null) {
-      RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher(this.form);
-      dispatcher.forward(req, res);
-    } else {
-      res.sendError(501, "No Authorization form available.");
-    }
-  }
-
-  @Override
-  protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     try {
 
-      // Let's provide some temporary credentials if we can 
-      String identifier = req.getParameter("oauth_token");
-      OAuthTemporaryToken token = OAuthTokens.getTemporary(identifier);
-      if (token == null)
-        throw new OAuthException(OAuthProblem.token_rejected);
-      if (token.hasExpired())
-        throw new OAuthException(OAuthProblem.token_expired);
-      if (token.isUsed())
-        throw new OAuthException(OAuthProblem.token_used);
+      // Grab the temporary credentials 
+      OAuthTemporaryToken token = getTemporaryToken(req);
 
-      // Check callback
+      // Check if client is privileged
       OAuthClient client = token.client();
-      String callback = token.callbackURL();
+      if (client.isPrivileged()) {
 
-      // Redirect to the client
-      if (OAuthConstants.OUT_OF_BAND.equals(callback)) {
-        if (this.oob == null) {
-          // Requested out of band but hasn't been configured
-          res.sendError(501, "out-of-band configuration is not supported");
-        } else {
-          // forward to 
-          RequestDispatcher dispatcher = this.getServletConfig().getServletContext().getRequestDispatcher(this.oob);
-          dispatcher.forward(req, res);
-//          res.sendRedirect(addOAuthInfo(callback, token));
-        }
+        // Automatically authorize the application
+        authorize(req, res, token);
+
       } else {
-        res.sendRedirect(addOAuthInfo(callback, token));
+
+        // Otherwise display the authorization form 
+        if (this.form != null) {
+          RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher(this.form);
+          dispatcher.forward(req, res);
+        } else {
+          res.sendError(501, "No Authorization form available.");
+        }        
       }
 
     } catch (OAuthException ex) {
@@ -143,6 +127,87 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
       OAuthErrorHandler.handle(res, ex);
     }
 
+  }
+
+  @Override
+  protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    try {
+
+      // Grab the temporary credentials 
+      OAuthTemporaryToken token = getTemporaryToken(req);
+
+      // Complete the authorization process
+      authorize(req, res, token);
+
+    } catch (OAuthException ex) {
+      // Generic error handling following OAuth Problem extension
+      OAuthErrorHandler.handle(res, ex);
+    }
+
+  }
+
+  // Private helpers
+  // ----------------------------------------------------------------------------------------------
+
+  /**
+   * Returns the temporary token.
+   * 
+   * @param req   The servlet request.
+   * 
+   * @return token The temporary token.
+   * 
+   * @throws OAuthException If the token is rejected, has expired or was used. 
+   */
+  private OAuthTemporaryToken getTemporaryToken(HttpServletRequest req) throws OAuthException {
+    // Return the temporary credentials if we can 
+    String identifier = req.getParameter("oauth_token");
+    OAuthTemporaryToken token = OAuthTokens.getTemporary(identifier);
+    if (token == null)
+      throw new OAuthException(OAuthProblem.token_rejected);
+    if (token.hasExpired())
+      throw new OAuthException(OAuthProblem.token_expired);
+    if (token.isUsed())
+      throw new OAuthException(OAuthProblem.token_used);
+    return token;
+  }
+
+  /**
+   * Complete the authorization process for the client application.
+   * 
+   * <p>This method will:
+   * <ul>
+   *   <li>either redirect the user to the Out-Of-Band page (which displays the verification code);</li>
+   *   <li>or redirect the user to the callback URL.</li>
+   * </ul>
+   * 
+   * @param req   The servlet request.
+   * @param res   The servlet response.
+   * @param token The temporary token.
+   * 
+   * @throws ServletException If thrown by the servlet 
+   * @throws IOException      If thrown by the servlet
+   */
+  private void authorize(HttpServletRequest req, HttpServletResponse res, OAuthTemporaryToken token) throws ServletException, IOException {
+    // Check URL callback
+    String callback = token.callbackURL();
+
+    // Server Callback
+    OAuthConfig configuration = OAuthConfig.getInstance();
+    configuration.callbacks().authorize(token, req);
+
+    // Redirect to the client or display Out-Of-Band page
+    if (OAuthConstants.OUT_OF_BAND.equals(callback)) {
+      if (this.oob == null) {
+        // Requested out of band but hasn't been configured
+        res.sendError(501, "out-of-band configuration is not supported");
+      } else {
+        // Forward to Out of Band page
+        RequestDispatcher dispatcher = this.getServletConfig().getServletContext().getRequestDispatcher(this.oob);
+        dispatcher.forward(req, res);
+      }
+    } else {
+      res.sendRedirect(addOAuthInfo(callback, token));
+    }
   }
 
   /**
