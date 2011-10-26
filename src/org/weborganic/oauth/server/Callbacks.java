@@ -29,10 +29,11 @@ public interface Callbacks {
   /**
    * Method invoked when the OAuth Token end point was passed successfully. 
    * 
-   * @param token The token passed for authorization.
-   * @param req   The HTTP Servlet request.
+   * @param temporary The temporary token.
+   * @param token     The token passed for authorization.
+   * @param req       The HTTP Servlet request.
    */
-  void token(OAuthAccessToken token, HttpServletRequest req);
+  void token(OAuthTemporaryToken temporary, OAuthAccessToken token, HttpServletRequest req);
 
   /**
    * Method invoked when the OAuth filter is passed successfully. 
