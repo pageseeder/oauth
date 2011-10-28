@@ -96,7 +96,7 @@ public final class OAuthConfig {
    * @return This method always returns a configuration.
    */
   public static OAuthConfig getInstance() {
-    if (config != null) nop();
+    if (config == null) nop();
     return config;
   }
 
