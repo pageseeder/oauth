@@ -7,7 +7,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,16 +14,22 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.weborganic.oauth.util.URLs;
-
 
 /**
  * Represents an OAuth request made my the client to the server.
  * 
  * @author Christophe Lauret
- * @version 20 July 2011
+ * @version 28 October 2011
  */
 public class OAuthRequest {
+
+  /**
+   * Logger.
+   */
+  private final static Logger LOGGER = LoggerFactory.getLogger(OAuthRequest.class);
 
   /**
    * The type of request
@@ -196,10 +201,10 @@ public class OAuthRequest {
     String baseURL = toBaseURL(req);
     // OAuth parameters
     String authorization = req.getHeader("Authorization");
-    System.err.println("[SERVER] Authorization => "+ authorization);
+    LOGGER.debug("Authorization => {}", authorization);
     Map<OAuthParameter, String> parameters = parseAuthorization(authorization);
     OAuthRequest m = new OAuthRequest(method, baseURL, req.getParameterMap(), parameters);
-    System.err.println("[SERVER] OAuthRequest => "+ m.toString());
+    LOGGER.debug("OAuthRequest => {}", m.toString());
     return m;
   }
 
@@ -248,6 +253,10 @@ public class OAuthRequest {
    * @throws ParseException
    */
   private static Map<OAuthParameter, String> parseAuthorization(String authorization) throws OAuthException {
+    // No authorization -> permission denied
+    if (authorization == null) {
+      throw new OAuthException(OAuthProblem.permission_denied);
+    }
     Map<OAuthParameter, String> parameters = new EnumMap<OAuthParameter, String>(OAuthParameter.class);
     String auth = authorization;
     if (authorization.toLowerCase().startsWith("oauth")) {
@@ -334,26 +343,5 @@ public class OAuthRequest {
       return v;
     }
   }
-
-  /* */
-  public static void main(String[] args) {
-    Map<String, String[]> http = new HashMap<String, String[]>();
-    http.put("b5", new String[]{"=%3D"});
-    http.put("a3", new String[]{"a", "2 q"});
-    http.put("c@", new String[]{""});
-    http.put("a2", new String[]{"r b"});
-    http.put("c2", new String[]{""});
-    Map<OAuthParameter, String> oauth = new EnumMap<OAuthParameter, String>(OAuthParameter.class);
-    oauth.put(OAuthParameter.oauth_consumer_key,     "9djdj82h48djs9d2");
-    oauth.put(OAuthParameter.oauth_token,            "kkk9d7dh3k39sjv7");
-    oauth.put(OAuthParameter.oauth_signature_method, "HMAC-SHA1");
-    oauth.put(OAuthParameter.oauth_timestamp,        "137131201");
-    oauth.put(OAuthParameter.oauth_nonce,            "7d8f3e4a");
-    oauth.put(OAuthParameter.oauth_signature,        "bYT5CMsGcbgUdFHObYMEfcx6bsw=");
-    OAuthRequest m = new OAuthRequest("POST", "http://example.com/", http, oauth);
-    System.err.println(m.getNormalisedParameters());
-    System.err.println("a2=r%20b&a3=2%20q&a3=a&b5=%3D%253D&c%40=&c2=&oauth_consumer_key=9djdj82h48djs9d2&oauth_nonce=7d8f3e4a&oauth_signature_method=HMAC-SHA1&oauth_timestamp=137131201&oauth_token=kkk9d7dh3k39sjv7");
-  }
-
 
 }
