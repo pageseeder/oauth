@@ -29,20 +29,19 @@ import org.weborganic.oauth.signature.OAuthSignatures;
 import org.weborganic.oauth.signature.OAuthSigner;
 import org.weborganic.oauth.util.Strings;
 
-
 /**
  * Filters request and check that the user has access to the underlying resource.
  * 
  * @author Christophe Lauret
- * @version 0.6.2 - 8 April 2011
- * @since 0.6.2
+ * @version 0.6.4 - 28 October 2011
+ * @since 0.6.0
  */
 public final class OAuthServerFilter implements Filter {
 
   /**
    * Logger.
    */
-  private final static Logger LOGGER = LoggerFactory.getLogger(OAuthRequest.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(OAuthServerFilter.class);
 
   /**
    * When this attribute is specified, there is no need to use OAuth.
@@ -92,10 +91,10 @@ public final class OAuthServerFilter implements Filter {
      throws IOException, ServletException {
 
     // Check whether we need to filter the request with OAuth
-    HttpSession session = req.getSession(true);
-    Object bypass = session.getAttribute(BYPASS_SESSION_ATTRIBUTE);
+    HttpSession session = req.getSession();
+    boolean bypass = session != null && session.getAttribute(BYPASS_SESSION_ATTRIBUTE) != null;
 
-    if (bypass == null) {
+    if (bypass) {
 
       // Let's check the OAuth request
       try {
