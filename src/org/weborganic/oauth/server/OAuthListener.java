@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Christophe Lauret
  * @version 26 October 2011
  */
-public interface Callbacks {
+public interface OAuthListener {
 
   /**
    * Method invoked when the OAuth Initiate end point was passed successfully. 

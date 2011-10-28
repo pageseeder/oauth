@@ -2,7 +2,7 @@ package org.weborganic.oauth.server;
 
 import org.weborganic.oauth.base.InMemoryClientManager;
 import org.weborganic.oauth.base.InMemoryTokenFactory;
-import org.weborganic.oauth.base.NOPCallbacks;
+import org.weborganic.oauth.base.NOPListener;
 
 
 /**
@@ -24,7 +24,7 @@ public final class OAuthConfig {
   /**
    * The call back implementation to use.
    */
-  private final Callbacks _callbacks;
+  private final OAuthListener _callbacks;
 
   /**
    * The call back implementation to use.
@@ -43,7 +43,7 @@ public final class OAuthConfig {
    * @param manager   the OAuth client manager implementation to use.
    * @param factory   the OAuth token factory implementation to use.
    */
-  private OAuthConfig(Callbacks callbacks, ClientManager manager, TokenFactory factory) {
+  private OAuthConfig(OAuthListener callbacks, ClientManager manager, TokenFactory factory) {
     if (callbacks == null) throw new NullPointerException("callbacks");
     if (manager == null) throw new NullPointerException("manager");
     if (factory == null) throw new NullPointerException("factory");
@@ -57,7 +57,7 @@ public final class OAuthConfig {
    * 
    * @return the OAuth call backs implementation to use.
    */
-  public Callbacks callbacks() {
+  public OAuthListener callbacks() {
     return this._callbacks;
   }
 
@@ -97,7 +97,7 @@ public final class OAuthConfig {
    * 
    * @throws NullPointerException if any argument is <code>null</code>.
    */
-  public static void init(Callbacks callbacks, ClientManager manager, TokenFactory factory) {
+  public static void init(OAuthListener callbacks, ClientManager manager, TokenFactory factory) {
     config = new OAuthConfig(callbacks, manager, factory);
     OAuthTokens.init(config._factory);
   }
@@ -106,7 +106,7 @@ public final class OAuthConfig {
    * Initialises the OAuth config using the specified implementations.
    */
   public static void init() {
-    config = new OAuthConfig(new NOPCallbacks(), new InMemoryClientManager(), new InMemoryTokenFactory());
+    config = new OAuthConfig(new NOPListener(), new InMemoryClientManager(), new InMemoryTokenFactory());
     OAuthTokens.init(config._factory);
   }
 

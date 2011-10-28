@@ -2,7 +2,7 @@ package org.weborganic.oauth.base;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.weborganic.oauth.server.Callbacks;
+import org.weborganic.oauth.server.OAuthListener;
 import org.weborganic.oauth.server.OAuthAccessToken;
 import org.weborganic.oauth.server.OAuthTemporaryToken;
 
@@ -12,7 +12,7 @@ import org.weborganic.oauth.server.OAuthTemporaryToken;
  * @author Christophe Lauret
  * @version 26 October 2011
  */
-public final class NOPCallbacks implements Callbacks {
+public final class NOPListener implements OAuthListener {
 
   /**
    * Do nothing.
