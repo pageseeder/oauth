@@ -47,7 +47,7 @@ import org.weborganic.oauth.util.Strings;
  * }</pre>
  * 
  * @author Christophe Lauret
- * @version 21 July 2011
+ * @version 28 October 2011
  */
 public final class OAuthTokenServlet extends HttpServlet {
 
@@ -131,10 +131,10 @@ public final class OAuthTokenServlet extends HttpServlet {
     // TODO Handle Nonce and Timestamp to prevent replay attacks
 
     // Generate a new access token for the client
-    OAuthAccessToken access = OAuthTokens.newToken(client);
+    OAuthAccessToken access = configuration.factory().newToken(client);
 
-    // Server Callback
-    configuration.callbacks().token(temporary, access, req);
+    // Invoke OAuth listener
+    configuration.listener().token(temporary, access, req);
 
     // Return the results to the client
     res.setContentType("application/x-www-form-urlencoded");

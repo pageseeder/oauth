@@ -44,7 +44,7 @@ import org.weborganic.oauth.util.URLs;
  * }</pre>
  * 
  * @author Christophe Lauret
- * @version 21 July 2011
+ * @version 28 October 2011
  */
 public final class OAuthInitiateServlet extends HttpServlet {
 
@@ -133,8 +133,8 @@ public final class OAuthInitiateServlet extends HttpServlet {
       throw new OAuthException(OAuthProblem.parameter_rejected);
     OAuthTemporaryToken token = OAuthTokens.newTemporary(client, callback);
 
-    // Server Callback
-    configuration.callbacks().initiate(token, req);
+    // Invoke OAuth listener
+    configuration.listener().initiate(token, req);
 
     // Return the results to the client
     res.setContentType("application/x-www-form-urlencoded");

@@ -63,7 +63,7 @@ import org.weborganic.oauth.util.URLs;
  * }</pre>
  * 
  * @author Christophe Lauret
- * @version 26 October 2011
+ * @version 28 October 2011
  */
 public final class OAuthAuthorizeServlet extends HttpServlet {
 
@@ -191,9 +191,9 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
     // Check URL callback
     String callback = token.callbackURL();
 
-    // Server Callback
+    // Invoke OAuth listener
     OAuthConfig configuration = OAuthConfig.getInstance();
-    configuration.callbacks().authorize(token, req);
+    configuration.listener().authorize(token, req);
 
     // Redirect to the client or display Out-Of-Band page
     if (OAuthConstants.OUT_OF_BAND.equals(callback)) {
