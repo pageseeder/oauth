@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.weborganic.oauth.OAuthException;
 import org.weborganic.oauth.OAuthParameter;
 import org.weborganic.oauth.OAuthProblem;
@@ -36,6 +38,11 @@ import org.weborganic.oauth.util.Strings;
  * @since 0.6.2
  */
 public final class OAuthServerFilter implements Filter {
+
+  /**
+   * Logger.
+   */
+  private final static Logger LOGGER = LoggerFactory.getLogger(OAuthRequest.class);
 
   /**
    * When this attribute is specified, there is no need to use OAuth.
@@ -123,6 +130,7 @@ public final class OAuthServerFilter implements Filter {
 
     // Grab the message
     OAuthRequest message = OAuthRequest.parse(req);
+    LOGGER.debug("Received {}", message);
 
     // Check that all the OAuth parameters required for temporary credentials are specified.
     message.checkRequired(OAuthParameter.RESOURCE_CREDENTIALS_REQUIRED);
@@ -131,6 +139,7 @@ public final class OAuthServerFilter implements Filter {
     String key = message.getOAuthParameter(OAuthParameter.oauth_consumer_key);
     OAuthClient client = configuration.manager().getByKey(key);
     if (client == null) throw new OAuthException(OAuthProblem.consumer_key_unknown);
+    LOGGER.debug("Identified client as {}", client.id());
 
     // Get parameters
     String method = message.getOAuthParameter(OAuthParameter.oauth_signature_method);
@@ -145,6 +154,8 @@ public final class OAuthServerFilter implements Filter {
       throw new OAuthException(OAuthProblem.token_expired);
     // TODO Token used and revoked...
 
+    LOGGER.debug("Token {} is valid", token);
+
     // TODO Handle Refresh tokens
 
     // Verify signature
@@ -153,9 +164,11 @@ public final class OAuthServerFilter implements Filter {
     OAuthSigner signer = OAuthSignatures.newSigner(method);
     String signatureCheck = signer.getSignature(baseString, client.getCredentials().secret(), access.credentials().secret());
     if (!Strings.equals(signature, signatureCheck)) {
+      LOGGER.debug("Signatures do not match: expected {} but got {}", signatureCheck, signature);
       throw new OAuthException(OAuthProblem.signature_invalid);
     }
 
+    LOGGER.debug("OAuth filter OK", token);
     // Server Callback
     configuration.callbacks().filter(access, req);
 
