@@ -30,11 +30,15 @@ import org.weborganic.oauth.signature.OAuthSigner;
 import org.weborganic.oauth.util.Strings;
 
 /**
- * Filters request and check that the user has access to the underlying resource.
+ * Filters requests and check that the user has access to the underlying resource.
+ * 
+ * <p>If the request is a valid OAuth request, that is the token credentials are valid, the filter
+ * will invoke the rest of the chain.
+ * 
+ * <p>Otherwise, an error will be returned corresponding to the specified {@link OAuthProblem}.
  * 
  * @author Christophe Lauret
- * @version 0.6.4 - 28 October 2011
- * @since 0.6.0
+ * @version 28 October 2011
  */
 public final class OAuthServerFilter implements Filter {
 
@@ -129,7 +133,6 @@ public final class OAuthServerFilter implements Filter {
 
     // Grab the message
     OAuthRequest message = OAuthRequest.parse(req);
-    LOGGER.debug("Received {}", message);
 
     // Check that all the OAuth parameters required for temporary credentials are specified.
     message.checkRequired(OAuthParameter.RESOURCE_CREDENTIALS_REQUIRED);
@@ -146,7 +149,7 @@ public final class OAuthServerFilter implements Filter {
 
     // Check the token credentials
     String token = message.getOAuthParameter(OAuthParameter.oauth_token);
-    OAuthAccessToken access = OAuthTokens.get(token);
+    OAuthAccessToken access = configuration.factory().get(token);
     if (access == null)
       throw new OAuthException(OAuthProblem.token_rejected);
     if (access.hasExpired())
@@ -167,9 +170,9 @@ public final class OAuthServerFilter implements Filter {
       throw new OAuthException(OAuthProblem.signature_invalid);
     }
 
-    LOGGER.debug("OAuth filter OK", token);
-    // Server Callback
-    configuration.callbacks().filter(access, req);
+    LOGGER.debug("OAuth filter OK for {}", token);
+    // Invoke OAuth listener
+    configuration.listener().filter(access, req);
 
   }
 

@@ -21,7 +21,7 @@ import org.weborganic.oauth.util.Strings;
 public class OAuthTokens {
 
   /**
-   * The defaut maximum age for a temporary OAuth token.
+   * The default maximum age for a temporary OAuth token.
    */
   private final static long DEFAULT_TEMPORARY_MAX_AGE = 10 * 60 * 1000L;
 
@@ -39,49 +39,6 @@ public class OAuthTokens {
    * To look up OAuth tokens by name.
    */
   private final static Map<String, OAuthTemporaryToken> TEMPORARY = new HashMap<String, OAuthTemporaryToken>();
-
-  /**
-   * Return the specified OAuth token instance using the token string.
-   * 
-   * @param token the token string.
-   * @return the corresponding OAuth token or <code>null</code>.
-   */
-  public static OAuthAccessToken get(String token) {
-    if (factory == null) throw new IllegalStateException("Token Factory was not initialised.");
-    return factory.get(token);
-  }
-
-  /**
-   * Returns the access tokens.
-   * 
-   * @param upTo The max number of tokens to return.
-   * @return the access tokens.
-   */
-  public static Collection<OAuthAccessToken> listTokens(int upTo) {
-    if (factory == null) throw new IllegalStateException("Token Factory was not initialised.");
-    return factory.listTokens(upTo);
-  }
-
-  /**
-   * Returns the access tokens.
-   * 
-   * @return the access tokens.
-   */
-  public static Collection<OAuthAccessToken> listTokens() {
-    if (factory == null) throw new IllegalStateException("Token Factory was not initialised.");
-    return factory.listTokens();
-  }
-
-  /**
-   * Creates new token credentials for the specified client.
-   * 
-   * @param client The OAuth client for which this token is issued.
-   * @return A new OAuth token.
-   */
-  public synchronized static OAuthAccessToken newToken(OAuthClient client) {
-    if (factory == null) throw new IllegalStateException("Token Factory was not initialised.");
-    return factory.newToken(client);
-  }
 
   /**
    * Returns the access tokens.
@@ -145,16 +102,6 @@ public class OAuthTokens {
     OAuthTemporaryToken token = new OAuthTemporaryToken(credentials, client, verifier, expires, callback);
     TEMPORARY.put(identifier, token);
     return token;
-  }
-
-  /**
-   * Remove the specified token effectively revoking access for the client currently using the token.
-   * 
-   * @return The token that was removed.
-   */
-  public static OAuthAccessToken revoke(String token) {
-    if (factory == null) throw new IllegalStateException("Token Factory was not initialised.");
-    return factory.revoke(token);
   }
 
   /**

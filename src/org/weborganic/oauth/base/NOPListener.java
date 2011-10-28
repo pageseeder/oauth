@@ -7,10 +7,10 @@ import org.weborganic.oauth.server.OAuthAccessToken;
 import org.weborganic.oauth.server.OAuthTemporaryToken;
 
 /**
- * A simple 'No Operation Performed' implementation of the <code>Callbacks</code> interface.
+ * A simple 'No Operation Performed' implementation of the <code>OAuthListener</code> interface.
  * 
  * @author Christophe Lauret
- * @version 26 October 2011
+ * @version 28 October 2011
  */
 public final class NOPListener implements OAuthListener {
 
