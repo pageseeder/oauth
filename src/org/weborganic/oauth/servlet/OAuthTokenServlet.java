@@ -139,7 +139,8 @@ public final class OAuthTokenServlet extends HttpServlet {
     // Return the results to the client
     res.setContentType("application/x-www-form-urlencoded");
     PrintWriter out = res.getWriter();
-    out.println("oauth_token=" + access.credentials().identifier() + "&oauth_token_secret="+ access.credentials().secret());
+    out.print("oauth_token=" + access.credentials().identifier() + "&oauth_token_secret="+ access.credentials().secret());
+    out.flush();
   }
 
 }
