@@ -1,7 +1,5 @@
 package org.weborganic.oauth.server;
 
-import org.weborganic.oauth.base.InMemoryClientManager;
-import org.weborganic.oauth.base.InMemoryTokenFactory;
 import org.weborganic.oauth.base.NOPClientManager;
 import org.weborganic.oauth.base.NOPListener;
 import org.weborganic.oauth.base.NOPTokenFactory;
@@ -103,22 +101,14 @@ public final class OAuthConfig {
   /**
    * Initialises the OAuth config using the specified implementations.
    * 
-   * @param callbacks the OAuth callbacks implementation to use.
-   * @param manager   the OAuth client manager implementation to use.
-   * @param factory   the OAuth token factory implementation to use.
+   * @param listener the OAuth listener implementation to use.
+   * @param manager  the OAuth client manager implementation to use.
+   * @param factory  the OAuth token factory implementation to use.
    * 
    * @throws NullPointerException if any argument is <code>null</code>.
    */
-  public static void init(OAuthListener callbacks, ClientManager manager, TokenFactory factory) {
-    config = new OAuthConfig(callbacks, manager, factory);
-    OAuthTokens.init(config._factory);
-  }
-
-  /**
-   * Initialises the OAuth config using the specified implementations.
-   */
-  public static void init() {
-    config = new OAuthConfig(new NOPListener(), new InMemoryClientManager(), new InMemoryTokenFactory());
+  public static void init(OAuthListener listener, ClientManager manager, TokenFactory factory) {
+    config = new OAuthConfig(listener, manager, factory);
     OAuthTokens.init(config._factory);
   }
 
