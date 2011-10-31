@@ -24,7 +24,6 @@ import org.weborganic.oauth.OAuthRequest;
 import org.weborganic.oauth.server.OAuthAccessToken;
 import org.weborganic.oauth.server.OAuthConfig;
 import org.weborganic.oauth.server.OAuthClient;
-import org.weborganic.oauth.server.OAuthTokens;
 import org.weborganic.oauth.signature.OAuthSignatures;
 import org.weborganic.oauth.signature.OAuthSigner;
 import org.weborganic.oauth.util.Strings;
@@ -96,9 +95,10 @@ public final class OAuthServerFilter implements Filter {
 
     // Check whether we need to filter the request with OAuth
     HttpSession session = req.getSession();
-    boolean bypass = session != null && session.getAttribute(BYPASS_SESSION_ATTRIBUTE) != null;
+    boolean bypass = req.getAttribute(BYPASS_SESSION_ATTRIBUTE) != null
+                  || session != null && session.getAttribute(BYPASS_SESSION_ATTRIBUTE) != null;
 
-    if (bypass) {
+    if (!bypass) {
 
       // Let's check the OAuth request
       try {
