@@ -1,9 +1,6 @@
 package org.weborganic.oauth;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -22,7 +19,7 @@ import org.weborganic.oauth.util.URLs;
  * Represents an OAuth request made my the client to the server.
  * 
  * @author Christophe Lauret
- * @version 28 October 2011
+ * @version 29 November 2011
  */
 public class OAuthRequest {
 
@@ -92,6 +89,13 @@ public class OAuthRequest {
       return "OAuthMessage(" + method + ", " + baseURL + ", " + oauthParameters + ")";
   }
 
+  /**
+   * Returns the value of the OAuth parameter
+   * 
+   * @param name the name of the oauth parameter
+   * @return the corresponding value if specified or <code>null</code>
+   * @throws IOException
+   */
   public String getOAuthParameter(OAuthParameter name) throws IOException {
       return oauthParameters.get(name);
   }
@@ -144,7 +148,7 @@ public class OAuthRequest {
   /**
    * Returns the normalised parameters.
    * 
-   * @return
+   * @return the normalised parameters.
    */
   private String getNormalisedParameters() {
     // Normalise the parameters (this size is correct most of the time)
@@ -194,10 +198,10 @@ public class OAuthRequest {
    * 
    * @return the corresponding OAuth message.
    */
+  @SuppressWarnings("unchecked")
   public static OAuthRequest parse(HttpServletRequest req) throws OAuthException {
     // HTTP Method
     String method = req.getMethod().toUpperCase();
-    String host = req.getHeader("Host");
     String baseURL = toBaseURL(req);
     // OAuth parameters
     String authorization = req.getHeader("Authorization");
@@ -207,28 +211,6 @@ public class OAuthRequest {
     LOGGER.debug("OAuthRequest => {}", m.toString());
     return m;
   }
-
-  protected static String normalizeUrl(String url) throws URISyntaxException {
-      URI uri = new URI(url);
-      String scheme = uri.getScheme().toLowerCase();
-      String authority = uri.getAuthority().toLowerCase();
-      boolean dropPort = (scheme.equals("http") && uri.getPort() == 80)
-                         || (scheme.equals("https") && uri.getPort() == 443);
-      if (dropPort) {
-          // find the last : in the authority
-          int index = authority.lastIndexOf(":");
-          if (index >= 0) {
-              authority = authority.substring(0, index);
-          }
-      }
-      String path = uri.getRawPath();
-      if (path == null || path.length() <= 0) {
-          path = "/"; // conforms to RFC 2616 section 3.2.2
-      }
-      // we know that there is no query and no fragment here.
-      return scheme + "://" + authority + path;
-  }
-
 
   /**
    * Returns the base URL corresponding to the specified Servlet request.
@@ -247,10 +229,13 @@ public class OAuthRequest {
   }
 
   /**
+   * Parses the Authorization header and returns the map of OAuth parameters.
    * 
-   * @param authorization
-   * @return
-   * @throws ParseException
+   * @param authorization the Authorization header.
+   * 
+   * @return The OAuth parameters specified in the Authorization header.
+   * 
+   * @throws OAuthException Either permission_denied or parameter_rejected
    */
   private static Map<OAuthParameter, String> parseAuthorization(String authorization) throws OAuthException {
     // No authorization -> permission denied
@@ -276,10 +261,15 @@ public class OAuthRequest {
       }
     }
 
-    // TODO: return an error when needed
     return parameters;
   }
 
+  /**
+   * Removes quotes if any.
+   * 
+   * @param v the value to unquote.
+   * @return the value without quotes.
+   */
   private static String unquote(String v) {
     if (v.length() < 2) return v;
     if (v.charAt(0) == '"' && v.charAt(v.length()-1) == '"') return v.substring(1, v.length()-1);
