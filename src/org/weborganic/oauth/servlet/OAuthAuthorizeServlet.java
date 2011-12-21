@@ -83,11 +83,17 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
    */
   private String oob = null;
 
+  /**
+   * The path to the error page (when the token is unspecified, expired, used or rejected)
+   */
+  private String error = null;
+
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
     this.form = config.getInitParameter("authorize-form-page");
     this.oob = config.getInitParameter("out-of-band-page");
+    this.error = config.getInitParameter("error-page");
   }
 
   @Override
@@ -95,6 +101,7 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
     super.destroy();
     this.oob = null;
     this.form = null;
+    this.error = null;
   }
 
   @Override
@@ -119,12 +126,18 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
           dispatcher.forward(req, res);
         } else {
           res.sendError(501, "No Authorization form available.");
-        }        
+        }
       }
 
     } catch (OAuthException ex) {
-      // Generic error handling following OAuth Problem extension
-      OAuthErrorHandler.handle(res, ex);
+      
+      if (this.error != null) {
+        OAuthProblem problem = ex.getProblem();
+        res.sendRedirect(addOAuthProblem(this.error, problem));
+      } else {
+        // Generic error handling following OAuth Problem extension
+        OAuthErrorHandler.handle(res, ex);
+      }
     }
 
   }
@@ -224,4 +237,16 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
     "&oauth_verifier="+URLs.encode(token.verifier());
   }
 
+  /**
+   * Appends the OAuth problem to the specified URL.
+   * 
+   * @param url   The URL
+   * @param token The temporary token
+   * 
+   * @return The URL the user should be redirected to.
+   */
+  private String addOAuthProblem(String url, OAuthProblem problem) {
+    if (problem == null) return url;
+    return url + (url.indexOf('?') >= 0? '&' : '?') + "oauth_problem="+problem.name();
+  }
 }

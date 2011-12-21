@@ -110,7 +110,7 @@ public enum OAuthProblem {
    * The <code>oauth_verifier</code> is incorrect.
    */
   verifier_invalid(401),
-  
+
   /**
    * The user needs to give additional permissions before the Consumer is allowed access to the resource.
    * 
