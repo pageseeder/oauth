@@ -10,16 +10,21 @@ import org.weborganic.oauth.OAuthProblem;
 import org.weborganic.oauth.util.URLs;
 
 
-
+/**
+ * A generic error handler for OAuth errors.
+ * 
+ * @author Christophe Lauret
+ * @version 21 December 2011
+ */
 public final class OAuthErrorHandler {
 
   /**
-   * Handles the specfied OAuthException.
+   * Handles the specified OAuthException.
    * 
-   * @param res
-   * @param ex
+   * @param res The HTTP Response
+   * @param ex  The error that needs handling
    * 
-   * @throws IOException
+   * @throws IOException If thrown while dealing with the Servlet response.
    */
   public static void handle(HttpServletResponse res, OAuthException ex) throws IOException {
     OAuthProblem problem = ex.getProblem();
