@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 Allette Systems (Australia)
+ * http://www.allette.com.au
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.pageseeder.oauth.signature;
 
 import java.security.GeneralSecurityException;
@@ -14,7 +29,7 @@ import org.pageseeder.oauth.util.URLs;
 
 /**
  * The HMAC-SHA1 signer.
- * 
+ *
  * <p>Copied from RFC 5849: The OAuth 1.0 Protocol - 3.4.2. HMAC-SHA1
  * <quote><pre>
  * The "HMAC-SHA1" signature method uses the HMAC-SHA1 signature
@@ -42,9 +57,9 @@ import org.pageseeder.oauth.util.URLs;
  *         parameter, after the result octet string is base64-encoded
  *         per [RFC2045], Section 6.8.
  * </pre></quote>
- * 
+ *
  * @see <a href="http://tools.ietf.org/html/rfc5849#section-3.4.4">The OAuth 1.0 Protocol - 3.4.4. PLAINTEXT</a>
- * 
+ *
  * @author christophe
  * @version 21 July 2011
  */
@@ -68,8 +83,8 @@ public final class HMACSha1Signer implements OAuthSigner {
 
   /**
    * {@inheritDoc}
-   * 
-   * @throws IllegalStateException 
+   *
+   * @throws IllegalStateException
    */
   @Override
   public String getSignature(String baseString, String clientSecret, String tokenSecret) {
@@ -87,7 +102,7 @@ public final class HMACSha1Signer implements OAuthSigner {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return Always <code>"HMAC-SHA1"</code>.
    */
   @Override
@@ -100,13 +115,13 @@ public final class HMACSha1Signer implements OAuthSigner {
 
   /**
    * Computes the signature as a byte array.
-   * 
+   *
    * @param baseString
    * @param clientSecret
    * @param tokenSecret
-   * 
+   *
    * @return The corresponding key.
-   * 
+   *
    * @throws GeneralSecurityException
    */
   private byte[] computeSignature(String baseString, String clientSecret, String tokenSecret) throws GeneralSecurityException {
@@ -119,10 +134,10 @@ public final class HMACSha1Signer implements OAuthSigner {
 
   /**
    * Returns the key for the specified arguments.
-   * 
+   *
    * @param clientSecret The client secret
    * @param tokenSecret  The token secret
-   * 
+   *
    * @return The secret key
    */
   private SecretKey getKey(String clientSecret, String tokenSecret) {

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 Allette Systems (Australia)
+ * http://www.allette.com.au
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.pageseeder.oauth.server;
 
 import java.util.ArrayList;
@@ -13,8 +28,8 @@ import org.pageseeder.oauth.util.Strings;
 
 
 /**
- * A utility class to manage OAuth tokens. 
- * 
+ * A utility class to manage OAuth tokens.
+ *
  * @author Christophe Lauret
  * @version 27 July 2011
  */
@@ -42,7 +57,7 @@ public class OAuthTokens {
 
   /**
    * Returns the access tokens.
-   * 
+   *
    * @param upTo The max number of tokens to return.
    * @return the access tokens.
    */
@@ -60,7 +75,7 @@ public class OAuthTokens {
 
   /**
    * Returns the access tokens.
-   * 
+   *
    * @return the access tokens.
    */
   public static Collection<OAuthTemporaryToken> listTemporaryTokens() {
@@ -73,7 +88,7 @@ public class OAuthTokens {
 
   /**
    * Returns the specified OAuth token instance using the token string.
-   * 
+   *
    * @param token the token string.
    * @return the corresponding OAuth token or <code>null</code>.
    */
@@ -84,7 +99,7 @@ public class OAuthTokens {
 
   /**
    * Creates new temporary credentials for the specified client with the given callback.
-   * 
+   *
    * @param client   The OAuth client for which this token is issued.
    * @param callback The URL to call back if the resource owner authorizes the client.
    * @return A new temporary token.
@@ -106,7 +121,7 @@ public class OAuthTokens {
 
   /**
    * Remove the specified token effectively revoking access for the client currently using the token.
-   * 
+   *
    * @return The token that was removed.
    */
   public static synchronized OAuthTemporaryToken revokeTemporary(String token) {
@@ -115,7 +130,7 @@ public class OAuthTokens {
 
   /**
    * Remove all the tokens which are stale.
-   * 
+   *
    * @return the number of tokens which were removed.
    */
   public static synchronized int clearStale() {
@@ -135,7 +150,7 @@ public class OAuthTokens {
 
   /**
    * Sets the token factory to use.
-   *  
+   *
    * @return the token factory to use.
    */
   protected static void init(TokenFactory factory) {
@@ -144,7 +159,7 @@ public class OAuthTokens {
 
   /**
    * Returns the token factory currently in use.
-   *  
+   *
    * @return the token factory currently in use.
    */
   public static TokenFactory getFactory() {

@@ -1,5 +1,17 @@
 /*
- * Copyright (c) 2011 weborganic systems pty. ltd.
+ * Copyright 2015 Allette Systems (Australia)
+ * http://www.allette.com.au
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.pageseeder.oauth.servlet;
 
@@ -15,27 +27,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.pageseeder.oauth.OAuthException;
 import org.pageseeder.oauth.OAuthParameter;
 import org.pageseeder.oauth.OAuthProblem;
 import org.pageseeder.oauth.OAuthRequest;
 import org.pageseeder.oauth.server.OAuthAccessToken;
-import org.pageseeder.oauth.server.OAuthConfig;
 import org.pageseeder.oauth.server.OAuthClient;
+import org.pageseeder.oauth.server.OAuthConfig;
 import org.pageseeder.oauth.signature.OAuthSignatures;
 import org.pageseeder.oauth.signature.OAuthSigner;
 import org.pageseeder.oauth.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Filters requests and check that the user has access to the underlying resource.
- * 
+ *
  * <p>If the request is a valid OAuth request, that is the token credentials are valid, the filter
  * will invoke the rest of the chain.
- * 
+ *
  * <p>Otherwise, an error will be returned corresponding to the specified {@link OAuthProblem}.
- * 
+ *
  * @author Christophe Lauret
  * @version 28 October 2011
  */
@@ -48,33 +60,36 @@ public final class OAuthServerFilter implements Filter {
 
   /**
    * When this attribute is specified, there is no need to use OAuth.
-   * 
+   *
    * <p>Use this when the client has already been authenticated by other means.
    */
-  public static final String BYPASS_SESSION_ATTRIBUTE = "com.weborganic.oauth.servlet.bypass"; 
+  public static final String BYPASS_SESSION_ATTRIBUTE = "com.weborganic.oauth.servlet.bypass";
 
   /**
    * Do nothing.
-   * 
+   *
    * {@inheritDoc}
    */
+  @Override
   public void init(FilterConfig config) throws ServletException {
   }
 
   /**
    * Do nothing.
-   * 
+   *
    * {@inheritDoc}
    */
+  @Override
   public void destroy() {
   }
 
   /**
    * Does the filtering.
-   * 
+   *
    * {@inheritDoc}
    */
-  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) 
+  @Override
+  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
      throws IOException, ServletException {
     // Use HTTP specific requests.
     doHttpFilter((HttpServletRequest)req, (HttpServletResponse)res, chain);
@@ -82,15 +97,15 @@ public final class OAuthServerFilter implements Filter {
 
   /**
    * Does the filtering.
-   * 
+   *
    * @param req   the HTTP servlet request
    * @param res   the HTTP servlet response
    * @param chain The filter chain
-   * 
+   *
    * @throws IOException      If thrown by any of the underlying filters or servlets.
    * @throws ServletException If thrown by any of the underlying filters or servlets.
    */
-  private void doHttpFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) 
+  private void doHttpFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
      throws IOException, ServletException {
 
     // Check whether we need to filter the request with OAuth
@@ -119,10 +134,10 @@ public final class OAuthServerFilter implements Filter {
 
   /**
    * Checks that the request has access to the underlying resources.
-   * 
+   *
    * @param req The HTTP servlet request
    * @param res The HTTP servlet response.
-   * 
+   *
    * @throws OAuthException Should any OAuth related problem occur.
    * @throws IOException Should an error occur while writing the output stream.
    */

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 Allette Systems (Australia)
+ * http://www.allette.com.au
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.pageseeder.oauth;
 
 import java.io.IOException;
@@ -6,18 +21,18 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.pageseeder.oauth.util.URLs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.pageseeder.oauth.util.URLs;
 
 /**
  * Represents an OAuth request made my the client to the server.
- * 
+ *
  * @author Christophe Lauret
  * @version 29 November 2011
  */
@@ -50,7 +65,7 @@ public class OAuthRequest {
   }
 
   /**
-   * The HTTP Method normalised as per RFC 5849 (always upper case).  
+   * The HTTP Method normalised as per RFC 5849 (always upper case).
    */
   private final String method;
 
@@ -71,7 +86,7 @@ public class OAuthRequest {
 
   /**
    * Create the new OAuthMessage with raw arguments.
-   * 
+   *
    * @param method          The HTTP method
    * @param baseURL         The base URL
    * @param httpParameters  The HTTP parameters.
@@ -86,37 +101,37 @@ public class OAuthRequest {
 
   @Override
   public String toString() {
-      return "OAuthMessage(" + method + ", " + baseURL + ", " + oauthParameters + ")";
+      return "OAuthMessage(" + this.method + ", " + this.baseURL + ", " + this.oauthParameters + ")";
   }
 
   /**
    * Returns the value of the OAuth parameter
-   * 
+   *
    * @param name the name of the oauth parameter
    * @return the corresponding value if specified or <code>null</code>
    * @throws IOException
    */
   public String getOAuthParameter(OAuthParameter name) throws IOException {
-      return oauthParameters.get(name);
+      return this.oauthParameters.get(name);
   }
 
   /**
    * Returns a map of OAuth parameters included in this message.
-   *   
+   *
    * @return a map of OAuth parameters included in this message.
    */
   public Map<OAuthParameter, String> getOAuthParameters() {
-    return oauthParameters;
+    return this.oauthParameters;
   }
 
   /**
    * Signs this message with the specified signature.
-   * 
-   * <p>A message can only be signed once, check if this message already contains an 
+   *
+   * <p>A message can only be signed once, check if this message already contains an
    * <code>oauth_signature</code> before calling this method.
-   * 
+   *
    * @param signature The signature for this message.
-   * 
+   *
    * @throws IllegalStateException If the message has already been signed.
    */
   public void sign(String signature) {
@@ -125,18 +140,18 @@ public class OAuthRequest {
     this.oauthParameters.put(OAuthParameter.oauth_signature, signature);
   }
 
-  // Signature Base String 
+  // Signature Base String
   // ==============================================================================================
 
   /**
-   * Returns the signature base string for this message following the rules defined in the 3.4.1 
-   * 
+   * Returns the signature base string for this message following the rules defined in the 3.4.1
+   *
    * @see <a href="http://tools.ietf.org/html/rfc5849#section-3.4.1">3.4.1 - Signature Base String</a>
-   * 
+   *
    * @return the signature base string for this message.
    */
   public String toSignatureBaseString() {
-    StringBuilder base = new StringBuilder(); 
+    StringBuilder base = new StringBuilder();
     base.append(this.method);
     base.append('&');
     base.append(URLs.encode(this.baseURL));
@@ -147,7 +162,7 @@ public class OAuthRequest {
 
   /**
    * Returns the normalised parameters.
-   * 
+   *
    * @return the normalised parameters.
    */
   private String getNormalisedParameters() {
@@ -171,7 +186,9 @@ public class OAuthRequest {
     //
     StringBuilder out = new StringBuilder();
     for (Pair pair : pairs) {
-      if (out.length() != 0) out.append('&');
+      if (out.length() != 0) {
+        out.append('&');
+      }
       out.append(pair.name());
       out.append('=');
       out.append(pair.value());
@@ -193,9 +210,9 @@ public class OAuthRequest {
 
   /**
    * Constructs an OAuth message from the specified HTTP Servlet request.
-   *  
+   *
    * @param req HTTP Servlet request.
-   * 
+   *
    * @return the corresponding OAuth message.
    */
   @SuppressWarnings("unchecked")
@@ -214,9 +231,9 @@ public class OAuthRequest {
 
   /**
    * Returns the base URL corresponding to the specified Servlet request.
-   * 
+   *
    * @param req The HTTP Servlet request.
-   * @return The corresponding base URL. 
+   * @return The corresponding base URL.
    */
   private static String toBaseURL(HttpServletRequest req) {
     String scheme = req.getScheme().toLowerCase();
@@ -230,18 +247,16 @@ public class OAuthRequest {
 
   /**
    * Parses the Authorization header and returns the map of OAuth parameters.
-   * 
+   *
    * @param authorization the Authorization header.
-   * 
+   *
    * @return The OAuth parameters specified in the Authorization header.
-   * 
+   *
    * @throws OAuthException Either permission_denied or parameter_rejected
    */
   private static Map<OAuthParameter, String> parseAuthorization(String authorization) throws OAuthException {
     // No authorization -> permission denied
-    if (authorization == null) {
-      throw new OAuthException(OAuthProblem.permission_denied);
-    }
+    if (authorization == null) throw new OAuthException(OAuthProblem.permission_denied);
     Map<OAuthParameter, String> parameters = new EnumMap<OAuthParameter, String>(OAuthParameter.class);
     String auth = authorization;
     if (authorization.toLowerCase().startsWith("oauth")) {
@@ -266,7 +281,7 @@ public class OAuthRequest {
 
   /**
    * Removes quotes if any.
-   * 
+   *
    * @param v the value to unquote.
    * @return the value without quotes.
    */
@@ -278,7 +293,7 @@ public class OAuthRequest {
 
   /**
    * An encoded name-value pair used for parameter normalisation.
-   * 
+   *
    * @author Christophe Lauret
    * @version 20 July 2011
    */
@@ -291,8 +306,8 @@ public class OAuthRequest {
     private final String value;
 
     /**
-     * Creates a new pair - ensure that both arguments are already encoded. 
-     * 
+     * Creates a new pair - ensure that both arguments are already encoded.
+     *
      * @param name  The percent encoded parameter name
      * @param value The percent encoded parameter value.
      */

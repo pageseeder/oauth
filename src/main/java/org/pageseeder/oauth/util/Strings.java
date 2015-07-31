@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 Allette Systems (Australia)
+ * http://www.allette.com.au
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.pageseeder.oauth.util;
 
 import java.nio.charset.Charset;
@@ -7,19 +22,19 @@ import java.util.Random;
 
 /**
  * A utility class for strings.
- * 
+ *
  * <p>This class provides methods for:
  * <ul>
  *   <li>Generating pseudo-random strings for use by OAuth as tokens or keys.</li>
  *   <li>Checking string equality without</li>
  * </ul>
- * 
+ *
  * <p>For convenience, this class will only return keys which characters do not require
  * URL percent encoding as they are made of ASCII letters and digits.
- * 
+ *
  * <p>Note: The characters are not equally distributed, in other words som characters to appear
  * more frequently than others.
- * 
+ *
  * @author Christophe Lauret
  * @version 21 July 2011
  */
@@ -37,14 +52,14 @@ public final class Strings {
 
   /**
    * Determine whether the given strings contain the same sequence of characters.
-   * 
+   *
    * <p>The implementation discourages a timing attack.
-   * 
+   *
    * @see <a href="http://codahale.com/a-lesson-in-timing-attacks/">A lesson in timing attack</a>
-   * 
+   *
    * @param x The first string to test for equality.
    * @param y The second string to test for equality.
-   * 
+   *
    * @return the results string equality.
    */
   public static boolean equals(String x, String y) {
@@ -57,8 +72,8 @@ public final class Strings {
     char[] b = y.toCharArray();
     char diff = (char) ((a.length == b.length) ? 0 : 1);
     int j = 0;
-    for (int i = 0; i < a.length; ++i) {
-      diff |= a[i] ^ b[j];
+    for (char element : a) {
+      diff |= element ^ b[j];
       j = (j + 1) % b.length;
     }
     return diff == 0;
@@ -67,7 +82,7 @@ public final class Strings {
 
   /**
    *Generates a random string with the specified length and composed of alpha-numeric ASCII characters (mixed case).
-   * 
+   *
    * @param lenth The length of the random string.
    * @return a random string with the specified length and composed of alpha-numeric ASCII characters (mixed case).
    */
@@ -77,11 +92,11 @@ public final class Strings {
 
   /**
    * Generates a random string with the specified length and composed of alpha-numeric ASCII characters (mixed case).
-   * 
+   *
    * <p>This method uses the SHA1 algorithm; the returned key is always 20 chars.
-   * 
+   *
    * @param name A name to use.
-   * 
+   *
    * @return A 20 characters long random string and composed of alpha-numeric ASCII characters (mixed case).
    */
   public static String random(String name) {
@@ -90,13 +105,13 @@ public final class Strings {
 
   /**
    * Generates a random string with the specified length and composed of alpha-numeric ASCII characters (mixed case).
-   * 
-   * <p>The first characters (up to 20) are created using SHA1, if the specified length is greater 
+   *
+   * <p>The first characters (up to 20) are created using SHA1, if the specified length is greater
    * than 20, then the key is filled with random alpha numeric characters.
-   * 
+   *
    * @param name   A name to use
    * @param length The length of the key to generate.
-   * 
+   *
    * @return a key for the specified name and length.
    */
   public static String random(String name, int length) {
@@ -105,12 +120,12 @@ public final class Strings {
 
   /**
    * Generates a random string with the specified length and composed of the characters within the specified range.
-   * 
+   *
    * @param name  A name to use
    * @param range The range of characters to use.
-   * 
+   *
    * @return a random string with the specified length and composed of the characters within the specified range.
-   * 
+   *
    * @throws NullPointerException     If the specified character range is <code>null</code>.
    * @throws IllegalArgumentException If the specified character range is less than 2 characters long.
    */
@@ -123,14 +138,14 @@ public final class Strings {
 
   /**
    * Generate a random string with the specified length and composed of the characters within the specified range.
-   * 
+   *
    * <p>This method uses the SHA1 algorithm; the returned string is always 20 characters long.
-   * 
+   *
    * @param name A name to use.
    * @param range The range of characters to use.
-   * 
+   *
    * @return a random string with the specified length and composed of the characters within the specified range.
-   * 
+   *
    * @throws NullPointerException     If the specified character range is <code>null</code>.
    * @throws IllegalArgumentException If the specified character range is less than 2 characters long.
    */
@@ -143,16 +158,16 @@ public final class Strings {
 
   /**
    * Generate a key for the given name and length.
-   * 
-   * <p>The first characters (up to 20) are created using SHA1, if the specified length is greater 
+   *
+   * <p>The first characters (up to 20) are created using SHA1, if the specified length is greater
    * than 20, then the key is filled with random characters.
-   * 
+   *
    * @param name   A name to use
    * @param length The length of the key to generate.
    * @param range The range of characters to use.
-   * 
+   *
    * @return a random string with the specified length and composed of the characters within the specified range.
-   * 
+   *
    * @throws NullPointerException     If the specified character range is <code>null</code>.
    * @throws IllegalArgumentException If the specified character range is less than 2 characters long.
    */
@@ -174,7 +189,7 @@ public final class Strings {
 
   /**
    * Checks that the range parameter is valid.
-   * 
+   *
    * @throws NullPointerException If <code>null</code>.
    * @throws IllegalArgumentException If less than 2 characters long.
    */
@@ -185,7 +200,7 @@ public final class Strings {
 
   /**
    * Append a number of pseudo-random characters to the specified key.
-   * 
+   *
    * @param key    A current key
    * @param length The length of the key
    * @param range  The range of characters to pick from.
@@ -206,7 +221,7 @@ public final class Strings {
 
   /**
    * Append a number of pseudo-random characters to the specified key.
-   * 
+   *
    * @param key    A current key
    * @param length The length of the key
    * @param range The range of characters to pick from.
@@ -221,10 +236,10 @@ public final class Strings {
 
   /**
    * Return a character from the specified byte using the specified range of characters.
-   *  
+   *
    * @param b     The byte
    * @param range The range of characters to pick from.
-   * 
+   *
    * @return The corresponding character.
    */
   private static char toChar(byte b, char[] range) {

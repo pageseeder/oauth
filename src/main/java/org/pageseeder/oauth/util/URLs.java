@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 Allette Systems (Australia)
+ * http://www.allette.com.au
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.pageseeder.oauth.util;
 
 import java.io.UnsupportedEncodingException;
@@ -10,7 +25,7 @@ import org.pageseeder.oauth.OAuthConstants;
 
 /**
  * A utility class to perform basic OAuth operations.
- * 
+ *
  * @author Christophe Lauret
  * @version 20 July 2011
  */
@@ -26,16 +41,16 @@ public class URLs {
   }
 
   /**
-   * Translates a string into <code>application/x-www-form-urlencoded</code> format as per 
-   * requirement by OAuth 1.0. 
-   * 
+   * Translates a string into <code>application/x-www-form-urlencoded</code> format as per
+   * requirement by OAuth 1.0.
+   *
    * <p>As OAuth encodes some characters differently:
    * <ul>
    *   <li>' ' (ASCII code 32) must be should be encoded as "%20" not '+';</li>
    *   <li>'*' (ASCII code 42) must be encoded as "%2A";</li>
    *   <li>'~' (ASCII code 126) mustnot be encoded.</li>
    * </ul>
-   * 
+   *
    * @param s The string to percent encode.
    * @return the encoded string
    */
@@ -50,8 +65,8 @@ public class URLs {
   }
 
   /**
-   * Decode the specified URL string. 
-   * 
+   * Decode the specified URL string.
+   *
    * @param s The string to percent encode.
    * @return the encoded string
    */
@@ -66,7 +81,7 @@ public class URLs {
 
   /**
    * Indicates whether the specified callback URL is acceptable.
-   * 
+   *
    * <p>A valid callback URL, MUST be:
    * <ul>
    *   <li>either a valid absolute URI not containing a fragment part</li>

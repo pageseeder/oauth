@@ -1,12 +1,27 @@
+/*
+ * Copyright 2015 Allette Systems (Australia)
+ * http://www.allette.com.au
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.pageseeder.oauth.server;
 
 import org.pageseeder.oauth.OAuthCredentials;
 
 /**
  * A temporary single use OAuth token.
- * 
+ *
  * <p>Tokens are immutable objects.
- * 
+ *
  * @author Christophe Lauret
  * @version 21 July 2011
  */
@@ -38,13 +53,13 @@ public final class OAuthTemporaryToken implements OAuthToken {
   private final String _callback;
 
   /**
-   * State variable to indicate that this token has been used 
+   * State variable to indicate that this token has been used
    */
   private boolean _used;
 
   /**
    * Creates a new OAuth token with the specified credentials.
-   * 
+   *
    * @param credentials The token credentials.
    * @param client      The client for which this token is granted
    * @param verifier    The verifier for this token.
@@ -94,7 +109,7 @@ public final class OAuthTemporaryToken implements OAuthToken {
 
   /**
    * Returns the verifier string for this token.
-   * 
+   *
    * @return the verifier string for this token.
    */
   public String verifier() {
@@ -103,7 +118,7 @@ public final class OAuthTemporaryToken implements OAuthToken {
 
   /**
    * Indicates whether this token has already been used.
-   * 
+   *
    * @return the verifier string for this token.
    */
   public boolean isUsed() {
@@ -119,7 +134,7 @@ public final class OAuthTemporaryToken implements OAuthToken {
 
   /**
    * Returns the call back URL used to verify this token.
-   * 
+   *
    * @return the call back URL for this temporary token.
    */
   public String callbackURL() {

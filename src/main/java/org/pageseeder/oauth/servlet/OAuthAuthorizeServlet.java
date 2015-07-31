@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 Allette Systems (Australia)
+ * http://www.allette.com.au
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.pageseeder.oauth.servlet;
 
 import java.io.IOException;
@@ -12,8 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.pageseeder.oauth.OAuthConstants;
 import org.pageseeder.oauth.OAuthException;
 import org.pageseeder.oauth.OAuthProblem;
-import org.pageseeder.oauth.server.OAuthConfig;
 import org.pageseeder.oauth.server.OAuthClient;
+import org.pageseeder.oauth.server.OAuthConfig;
 import org.pageseeder.oauth.server.OAuthTemporaryToken;
 import org.pageseeder.oauth.server.OAuthTokens;
 import org.pageseeder.oauth.util.URLs;
@@ -21,24 +36,24 @@ import org.pageseeder.oauth.util.URLs;
 
 /**
  * A servlet providing an OAuth 1.0 endpoint to authorize an external application.
- * 
+ *
  * <p>This servlet MUST be mapped to a protected URI so that only authenticated user can access it.
- * 
- * <p>This class assumes that authentication has already been performed, and simply process an 
+ *
+ * <p>This class assumes that authentication has already been performed, and simply process an
  * authorization given by the resource owner.
- * 
- * <p>Typically, GET requests will display the Authorization form and POST requests will accept an 
+ *
+ * <p>Typically, GET requests will display the Authorization form and POST requests will accept an
  * application authorization. Both must be secure.
- * 
+ *
  * <p>The following initialization parameters must be specified:
  * <ul>
- *   <li><code>out-of-band-page</code> path to the page that will display the verifier when the 
+ *   <li><code>out-of-band-page</code> path to the page that will display the verifier when the
  *   callback is <i>out-of-band</i> ("oob");</li>
  *   <li><code>authorize-form-page</code> path to the page that will allow the user to see the
  *   details of the application to authorize and accept or reject the authorization.
  *   </li>
  * </ul>
- * 
+ *
  * <p>See example Web descriptor configuration:
  * <pre>
  * {@code
@@ -54,14 +69,14 @@ import org.pageseeder.oauth.util.URLs;
  *    <param-value>/oauth/authorize.html</param-value>
  *  </init-param>
  * </servlet>
- * 
+ *
  * <servlet-mapping>
  *   <servlet-name>OAuthAuthorize</servlet-name>
  *   <url-pattern>/authorize</url-pattern>
  * </servlet-mapping>
- * 
+ *
  * }</pre>
- * 
+ *
  * @author Christophe Lauret
  * @version 28 October 2011
  */
@@ -108,7 +123,7 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     try {
 
-      // Grab the temporary credentials 
+      // Grab the temporary credentials
       OAuthTemporaryToken token = getTemporaryToken(req);
 
       // Check if client is privileged
@@ -120,9 +135,9 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
 
       } else {
 
-        // Otherwise display the authorization form 
+        // Otherwise display the authorization form
         if (this.form != null) {
-          RequestDispatcher dispatcher = this.getServletContext().getRequestDispatcher(this.form);
+          RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(this.form);
           dispatcher.forward(req, res);
         } else {
           res.sendError(501, "No Authorization form available.");
@@ -130,7 +145,7 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
       }
 
     } catch (OAuthException ex) {
-      
+
       if (this.error != null) {
         OAuthProblem problem = ex.getProblem();
         res.sendRedirect(addOAuthProblem(this.error, problem));
@@ -146,7 +161,7 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
     try {
 
-      // Grab the temporary credentials 
+      // Grab the temporary credentials
       OAuthTemporaryToken token = getTemporaryToken(req);
 
       // Complete the authorization process
@@ -164,15 +179,15 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
 
   /**
    * Returns the temporary token.
-   * 
+   *
    * @param req   The servlet request.
-   * 
+   *
    * @return token The temporary token.
-   * 
-   * @throws OAuthException If the token is rejected, has expired or was used. 
+   *
+   * @throws OAuthException If the token is rejected, has expired or was used.
    */
   private OAuthTemporaryToken getTemporaryToken(HttpServletRequest req) throws OAuthException {
-    // Return the temporary credentials if we can 
+    // Return the temporary credentials if we can
     String identifier = req.getParameter("oauth_token");
     OAuthTemporaryToken token = OAuthTokens.getTemporary(identifier);
     if (token == null)
@@ -186,18 +201,18 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
 
   /**
    * Complete the authorization process for the client application.
-   * 
+   *
    * <p>This method will:
    * <ul>
    *   <li>either redirect the user to the Out-Of-Band page (which displays the verification code);</li>
    *   <li>or redirect the user to the callback URL.</li>
    * </ul>
-   * 
+   *
    * @param req   The servlet request.
    * @param res   The servlet response.
    * @param token The temporary token.
-   * 
-   * @throws ServletException If thrown by the servlet 
+   *
+   * @throws ServletException If thrown by the servlet
    * @throws IOException      If thrown by the servlet
    */
   private void authorize(HttpServletRequest req, HttpServletResponse res, OAuthTemporaryToken token) throws ServletException, IOException {
@@ -215,7 +230,7 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
         res.sendError(501, "out-of-band configuration is not supported");
       } else {
         // Forward to Out of Band page
-        RequestDispatcher dispatcher = this.getServletConfig().getServletContext().getRequestDispatcher(this.oob);
+        RequestDispatcher dispatcher = getServletConfig().getServletContext().getRequestDispatcher(this.oob);
         dispatcher.forward(req, res);
       }
     } else {
@@ -225,10 +240,10 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
 
   /**
    * Appends the OAuth token and verifier to the specified URL.
-   * 
+   *
    * @param url   The URL
    * @param token The temporary token
-   * 
+   *
    * @return The URL the user should be redirected to.
    */
   private String addOAuthInfo(String url, OAuthTemporaryToken token) {
@@ -239,10 +254,10 @@ public final class OAuthAuthorizeServlet extends HttpServlet {
 
   /**
    * Appends the OAuth problem to the specified URL.
-   * 
+   *
    * @param url   The URL
    * @param token The temporary token
-   * 
+   *
    * @return The URL the user should be redirected to.
    */
   private String addOAuthProblem(String url, OAuthProblem problem) {
