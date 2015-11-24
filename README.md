@@ -1,3 +1,5 @@
-# wo-oauth
+[ ![Download](https://api.bintray.com/packages/pageseeder/maven/oauth/images/download.svg) ](https://bintray.com/pageseeder/maven/oauth/_latestVersion)
 
-A simple Java implementation of an OAuth1.0a server using Servlets and Filters.
+# OAuth 1.0a
+
+A simple Java implementation of an OAuth1.0a server using Servlets, Filters and a built-in database.
