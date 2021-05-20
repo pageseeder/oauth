@@ -1,5 +1,7 @@
 plugins {
-  id "com.jfrog.bintray" version "1.7"
+  id 'java-library'
+  id 'maven-publish'
+  id 'io.codearte.nexus-staging' version '0.30.0'
 }
 
 group       = 'org.pageseeder.oauth'
@@ -8,30 +10,25 @@ description = "$title"
 
 apply plugin: 'java'
 apply plugin: 'maven-publish'
-apply from: 'gradle/publishing.gradle'
+apply from: 'gradle/publish-mavencentral.gradle'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-  maven { url 'http://dl.bintray.com/pageseeder/maven' }
-  jcenter()
+  mavenCentral {
+    url = uri("https://maven-central.storage.googleapis.com/maven2")
+  }
 }
 
 dependencies {
-
-  compile (
-    'org.slf4j:slf4j-api:1.7.21',
-    'commons-codec:commons-codec:1.4'
-  )
-
   compileOnly (
+    'org.slf4j:slf4j-api:1.7.21',
+    'commons-codec:commons-codec:1.4',
     'javax.servlet:javax.servlet-api:3.1.0'
   )
-
-  testCompile (
+  testCompileOnly (
     'junit:junit:4.12',
     'org.slf4j:slf4j-simple:1.7.21'
   )
-
 }
