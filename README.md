@@ -1,4 +1,4 @@
-[ ![Download](https://api.bintray.com/packages/pageseeder/maven/oauth/images/download.svg) ](https://bintray.com/pageseeder/maven/oauth/_latestVersion)
+[![Maven Central](https://img.shields.io/maven-central/v/org.pageseeder.oauth/pso-oauth.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22org.pageseeder.oauth%22%20AND%20a:%22pso-oauth%22)
 
 # OAuth 1.0a
 
